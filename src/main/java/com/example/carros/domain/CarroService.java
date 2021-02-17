@@ -32,16 +32,16 @@ public class CarroService {
         return carroRepository.findByTipo(tipo).stream().map(CarroDTO::create).collect(Collectors.toList());
     }
 
-    public Carro insert(Carro carro) {
+    public CarroDTO insert(Carro carro) {
+        Assert.isNull(carro.getId(), "Não foi possível atualizar o registro.");
 
-        return carroRepository.save(carro);
+        return CarroDTO.create(carroRepository.save(carro));
     }
 
-    public Carro update(Carro carro, Long id) {
+    public CarroDTO update(Carro carro, Long id) {
 
         Assert.notNull(id, "Não foi possível atualizar o registro.");
 
-        //Busca o carro no banco de dados
         Optional<Carro> optional = carroRepository.findById(id);
 
         if (optional.isPresent()){
@@ -51,9 +51,11 @@ public class CarroService {
             System.out.println("Carro id " + db.getId());
 
             carroRepository.save(db);
-            return db;
+
+            return CarroDTO.create(db);
         }else {
-            throw  new RuntimeException("Não foi possível atualizar o registro.");
+            return null;
+            //throw  new RuntimeException("Não foi possível atualizar o registro.");
         }
 
         //usando LAMBDA
@@ -69,9 +71,13 @@ public class CarroService {
         }).orElseThrow(() -> new RuntimeException("Não foi possível atualizar o registro."));*/
     }
 
-    public void delete(Long id) {
+    public boolean delete(Long id) {
 
-        if (getCarroById(id).isPresent())
+        if (getCarroById(id).isPresent()) {
             carroRepository.deleteById(id);
+            return true;
+        }else {
+            return false;
+        }
     }
 }
