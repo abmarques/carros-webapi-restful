@@ -18,18 +18,25 @@ public class CarrosController {
     private CarroService carrosService;
 
     @GetMapping
-    public Iterable<Carro> Get(){
-        return carrosService.getCarros();
+    public ResponseEntity<Iterable<Carro>> Get(){
+        return ResponseEntity.ok(carrosService.getCarros());
     }
 
     @GetMapping("/{id}")
-    public Optional<Carro> GetById(@PathVariable("id") Long id){
-        return carrosService.getCarroById(id);
+    public ResponseEntity GetById(@PathVariable("id") Long id){
+        var carro = carrosService.getCarroById(id);
+
+        return carro.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/tipo/{tipo}")
-    public Iterable<Carro> GetById(@PathVariable("tipo") String tipo){
-        return carrosService.getCarroByTipo(tipo);
+    public ResponseEntity<Iterable<Carro>> GetById(@PathVariable("tipo") String tipo){
+        var carros= carrosService.getCarroByTipo(tipo);
+
+        return carros.isEmpty() ?
+                ResponseEntity.noContent().build() :
+                ResponseEntity.ok(carros);
     }
 
     @PostMapping

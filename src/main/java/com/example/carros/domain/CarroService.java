@@ -25,7 +25,7 @@ public class CarroService {
         return carroRepository.findById(id);
     }
 
-    public Iterable<Carro>  getCarroByTipo(String tipo) {
+    public List<Carro> getCarroByTipo(String tipo) {
         return carroRepository.findByTipo(tipo);
     }
 
@@ -39,16 +39,14 @@ public class CarroService {
 
         //Busca o carro no banco de dados
         Optional<Carro> optional = getCarroById(id);
+
         if (optional.isPresent()){
             Carro db = optional.get();
-            //Copiar as propriedades
             db.setNome(carro.getNome());
             db.setTipo(carro.getTipo());
             System.out.println("Carro id " + db.getId());
 
-            //Atualiza o carro
             carroRepository.save(db);
-
             return db;
         }else {
             throw  new RuntimeException("Não foi possível atualizar o registro.");
@@ -65,9 +63,6 @@ public class CarroService {
             return db;
 
         }).orElseThrow(() -> new RuntimeException("Não foi possível atualizar o registro."));*/
-
-
-
     }
 
     public void delete(Long id) {
