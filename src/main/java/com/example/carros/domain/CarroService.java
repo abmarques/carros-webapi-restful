@@ -19,17 +19,17 @@ public class CarroService {
 
     public List<CarroDTO> getCarros(){
 
-        return carroRepository.findAll().stream().map(CarroDTO::new).collect(Collectors.toList());
+        return carroRepository.findAll().stream().map(CarroDTO::create).collect(Collectors.toList());
     }
 
-    public Optional<Carro> getCarroById(long id) {
+    public Optional<CarroDTO> getCarroById(long id) {
 
-        return carroRepository.findById(id);
+        return carroRepository.findById(id).map(CarroDTO::create);
     }
 
     public List<CarroDTO> getCarroByTipo(String tipo) {
 
-        return carroRepository.findByTipo(tipo).stream().map(CarroDTO::new).collect(Collectors.toList());
+        return carroRepository.findByTipo(tipo).stream().map(CarroDTO::create).collect(Collectors.toList());
     }
 
     public Carro insert(Carro carro) {
@@ -42,7 +42,7 @@ public class CarroService {
         Assert.notNull(id, "Não foi possível atualizar o registro.");
 
         //Busca o carro no banco de dados
-        Optional<Carro> optional = getCarroById(id);
+        Optional<Carro> optional = carroRepository.findById(id);
 
         if (optional.isPresent()){
             Carro db = optional.get();
@@ -70,9 +70,8 @@ public class CarroService {
     }
 
     public void delete(Long id) {
-        Optional<Carro> carro = getCarroById(id);
 
-        if (carro.isPresent())
+        if (getCarroById(id).isPresent())
             carroRepository.deleteById(id);
     }
 }
